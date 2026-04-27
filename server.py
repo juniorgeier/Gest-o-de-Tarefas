@@ -151,23 +151,25 @@ def init_db() -> None:
         if count == 0:
             with BASE_TASKS_PATH.open("r", encoding="utf-8") as f:
                 tasks = json.load(f)
-            conn.executemany(
-                _sql(
-                    """
-                    INSERT INTO base_tasks (id, atividade, setor, observacoes)
-                    VALUES (?, ?, ?, ?)
-                    """
-                ),
-                [
-                    (
-                        int(task["TaskID"]),
-                        str(task.get("Atividade", "")),
-                        str(task.get("Setor", "")),
-                        str(task.get("Observações", task.get("ObservaÃ§Ãµes", ""))),
-                    )
-                    for task in tasks
-                ],
-            )
+            rows = [
+                (
+                    int(task["TaskID"]),
+                    str(task.get("Atividade", "")),
+                    str(task.get("Setor", "")),
+                    str(task.get("Observações", task.get("ObservaÃ§Ãµes", ""))),
+                )
+                for task in tasks
+            ]
+            with conn.cursor() as cur:
+                cur.executemany(
+                    _sql(
+                        """
+                        INSERT INTO base_tasks (id, atividade, setor, observacoes)
+                        VALUES (?, ?, ?, ?)
+                        """
+                    ),
+                    rows,
+                )
 
     ensure_month(reference_month_key())
 
