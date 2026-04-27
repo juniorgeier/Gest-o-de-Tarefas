@@ -1,0 +1,95 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gestão de Tarefas Mensais</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <main class="app">
+    <header class="hero">
+      <h1>Gestão de Tarefas Mensais</h1>
+      <p>Lista mensal simples, com histórico e renovação automática.</p>
+    </header>
+
+    <section class="panel controls">
+      <div class="control-group">
+        <label for="monthSelect">Mês de referência</label>
+        <select id="monthSelect" aria-label="Selecionar mês"></select>
+      </div>
+      <button id="newMonthButton" type="button">Criar próximo mês</button>
+    </section>
+
+    <section class="panel summary">
+      <h2>Resumo do mês</h2>
+      <div class="summary-grid">
+        <article><span>Pendentes</span><strong id="pendingCount">0</strong></article>
+        <article><span>Em andamento</span><strong id="inProgressCount">0</strong></article>
+        <article><span>Concluídas</span><strong id="doneCount">0</strong></article>
+      </div>
+    </section>
+
+    <section class="panel tasks">
+      <h2>Tarefas em lista</h2>
+      <ul id="tasksContainer" class="tasks-list"></ul>
+    </section>
+
+    <section class="panel manage-tasks">
+      <h2>Gerenciar tarefas</h2>
+      <form id="addTaskForm" class="add-task-form">
+        <div class="control-group">
+          <label for="taskDescriptionInput">Descrição</label>
+          <input
+            id="taskDescriptionInput"
+            name="description"
+            type="text"
+            placeholder="Digite a descrição da tarefa"
+            required
+          />
+        </div>
+        <div class="control-group">
+          <label for="taskSectorInput">Setor</label>
+          <input
+            id="taskSectorInput"
+            name="sector"
+            type="text"
+            placeholder="Ex.: Logistica"
+            required
+          />
+        </div>
+        <div class="control-group">
+          <label for="taskNotesInput">Observações (opcional)</label>
+          <input
+            id="taskNotesInput"
+            name="notes"
+            type="text"
+            placeholder="Detalhes extras da tarefa"
+          />
+        </div>
+        <button id="addTaskButton" type="submit">Adicionar tarefa</button>
+      </form>
+    </section>
+  </main>
+
+  <template id="taskTemplate">
+    <li class="task-row">
+      <div class="task-main">
+        <strong class="task-title"></strong>
+        <span class="task-meta"></span>
+      </div>
+      <div class="task-status">
+        <label>Status</label>
+        <select class="status-select" aria-label="Status da tarefa">
+          <option value="Pendente">Pendente</option>
+          <option value="Em andamento">Em andamento</option>
+          <option value="Concluído">Concluído</option>
+        </select>
+      </div>
+      <button class="remove-task-button" type="button" aria-label="Remover tarefa" title="Remover tarefa">🗑</button>
+    </li>
+  </template>
+
+  <script src="./app.js" type="module"></script>
+</body>
+</html>

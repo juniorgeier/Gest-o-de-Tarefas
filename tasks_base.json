@@ -1,0 +1,122 @@
+[
+  {
+    "TaskID": 1,
+    "Atividade": "Verificar na pesquisa do mov de caixa as transações do caixa",
+    "Setor": "Financeiro",
+    "Observações": ""
+  },
+  {
+    "TaskID": 2,
+    "Atividade": "Verificar o destino das liquidações e reapresentações dos cheques",
+    "Setor": "Financeiro",
+    "Observações": ""
+  },
+  {
+    "TaskID": 3,
+    "Atividade": "Verificar Cheques Sem liquidar do Grupo (REL 249)",
+    "Setor": "Financeiro",
+    "Observações": ""
+  },
+  {
+    "TaskID": 4,
+    "Atividade": "Analisar Relatório agrupamento de agrupamento matriz e filiais(Rel. 150245) (MARCENAL)",
+    "Setor": "Financeiro",
+    "Observações": ""
+  },
+  {
+    "TaskID": 5,
+    "Atividade": "Analisar Relatório matriz e filiais(Rel. 150006) - TODAS FORMAS DE PAGTO A VISTA (YPE E MARCENAL)",
+    "Setor": "Financeiro",
+    "Observações": ""
+  },
+  {
+    "TaskID": 6,
+    "Atividade": "Verificar Cartões de credito sem fechamento (Gleyston) (YPE E MARCENAL)",
+    "Setor": "Financeiro",
+    "Observações": ""
+  },
+  {
+    "TaskID": 7,
+    "Atividade": "Cartões em aberto não baixados no Banco ( Marcenal e Ype) (Gleyston)",
+    "Setor": "Financeiro",
+    "Observações": ""
+  },
+  {
+    "TaskID": 8,
+    "Atividade": "Analisar Relatório \"RECEBER NA ENTREGA\" matriz e filiais(Rel. 132)",
+    "Setor": "Financeiro",
+    "Observações": ""
+  },
+  {
+    "TaskID": 9,
+    "Atividade": "Analisar senhas 31 de limite de credito ultrapassado (Rel 157) de todas as empresas (REL. 150200) (Gleyston)",
+    "Setor": "Financeiro",
+    "Observações": ""
+  },
+  {
+    "TaskID": 10,
+    "Atividade": "Analisar Adiantamento fornecedor em aberto e Contas a Pagar não baixadas ( REL 190 e 150004) - TODAS AS EMPRESAS DO GRUPO",
+    "Setor": "Financeiro",
+    "Observações": ""
+  },
+  {
+    "TaskID": 11,
+    "Atividade": "Conciliação Caixa (Marcenal Roo; Sorriso; Vilhena e Ype Roo) - (GLEYSTON)",
+    "Setor": "Financeiro",
+    "Observações": ""
+  },
+  {
+    "TaskID": 12,
+    "Atividade": "Verificar INADIMPLENCIA Grupo (Gleyston) – YPE e MARCENAL (vencidos a mais de 60 dias) – REL 91 + REL 249 CHEQUES",
+    "Setor": "Financeiro",
+    "Observações": ""
+  },
+  {
+    "TaskID": 13,
+    "Atividade": "Verificar Conta Contabil dos Sócios (PF) e desp. Indedutivel",
+    "Setor": "Contabilidade",
+    "Observações": ""
+  },
+  {
+    "TaskID": 14,
+    "Atividade": "Comparar e acertar Inventario de estoque X Estoque na Contabilidade",
+    "Setor": "Contabilidade",
+    "Observações": ""
+  },
+  {
+    "TaskID": 15,
+    "Atividade": "Analisar DRE do grupo para redução de Despesas(passar prejuizo da tranp para Marcenal mad, atraves de frete).",
+    "Setor": "Contabilidade",
+    "Observações": ""
+  },
+  {
+    "TaskID": 16,
+    "Atividade": "Recontar e baixar produtos faltantes e avariados( Conferir Repetição de prod. No rel. 153) - (ALINE)",
+    "Setor": "Estoque",
+    "Observações": ""
+  },
+  {
+    "TaskID": 17,
+    "Atividade": "Manutenção dos produtos em promoção não vendidos a N dias(ALLAN)",
+    "Setor": "Estoque",
+    "Observações": ""
+  },
+  {
+    "TaskID": 18,
+    "Atividade": "Verificar pedidos pendentes/parciais a mais de 45 dias - REL 197 (ALLAN)",
+    "Setor": "Estoque",
+    "Observações": ""
+  },
+  {
+    "TaskID": 19,
+    "Atividade": "Puxar Relatorio 77, analisar produtos novos cadastrados na semana para passar aos vendedores na reunião de segunda",
+    "Setor": "Estoque",
+    "Observações": ""
+  },
+  {
+    "TaskID": 20,
+    "Atividade": "Verificar as entregas pendentes de PDV no logistica de todas empresas",
+    "Setor": "Logistica",
+    "ObservaÃ§Ãµes": ""
+  }
+]

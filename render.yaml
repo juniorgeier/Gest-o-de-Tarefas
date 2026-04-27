@@ -1,0 +1,11 @@
+﻿services:
+  - type: web
+    name: gestao-de-tarefas
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python server.py
+    autoDeploy: true
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
