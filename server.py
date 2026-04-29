@@ -111,6 +111,7 @@ def init_db() -> None:
                     month_key TEXT NOT NULL,
                     task_id INTEGER NOT NULL,
                     status TEXT NOT NULL,
+                    observacoes TEXT NOT NULL DEFAULT '',
                     updated_at TEXT NOT NULL,
                     PRIMARY KEY (month_key, task_id),
                     FOREIGN KEY (month_key) REFERENCES months (month_key) ON DELETE CASCADE,
@@ -137,6 +138,7 @@ def init_db() -> None:
                     month_key TEXT NOT NULL,
                     task_id INTEGER NOT NULL,
                     status TEXT NOT NULL,
+                    observacoes TEXT NOT NULL DEFAULT '',
                     updated_at TEXT NOT NULL,
                     PRIMARY KEY (month_key, task_id),
                     FOREIGN KEY (month_key) REFERENCES months (month_key) ON DELETE CASCADE,
@@ -144,6 +146,15 @@ def init_db() -> None:
                 );
                 """
             )
+
+        # Compatibilidade com bancos já existentes antes da coluna mensal de observações.
+        if IS_POSTGRES:
+            conn.execute("ALTER TABLE monthly_tasks ADD COLUMN IF NOT EXISTS observacoes TEXT NOT NULL DEFAULT ''")
+        else:
+            columns = conn.execute("PRAGMA table_info(monthly_tasks)").fetchall()
+            column_names = {str(_row_to_dict(col)["name"]) for col in columns}
+            if "observacoes" not in column_names:
+                conn.execute("ALTER TABLE monthly_tasks ADD COLUMN observacoes TEXT NOT NULL DEFAULT ''")
 
         count_row = _row_to_dict(conn.execute("SELECT COUNT(*) AS total FROM base_tasks").fetchone())
         count = int(count_row["total"])
@@ -191,7 +202,7 @@ def ensure_month(month_key: str) -> None:
             _sql(
                 """
                 INSERT INTO monthly_tasks (month_key, task_id, status, updated_at)
-                SELECT ?, id, 'Pendente', ?
+                SELECT ?, id, 'Pendente', '', ?
                 FROM base_tasks
                 ORDER BY id
                 """
@@ -225,7 +236,7 @@ def get_tasks_for_month(month_key: str) -> list[dict]:
                     bt.id,
                     bt.atividade,
                     bt.setor,
-                    bt.observacoes,
+                    mt.observacoes,
                     mt.status
                 FROM monthly_tasks mt
                 JOIN base_tasks bt ON bt.id = mt.task_id
@@ -285,28 +296,28 @@ def create_base_task(atividade: str, setor: str, observacoes: str = "") -> dict:
             conn.execute(
                 _sql(
                     """
-                    INSERT INTO monthly_tasks (month_key, task_id, status, updated_at)
-                    SELECT month_key, ?, 'Pendente', ?
+                    INSERT INTO monthly_tasks (month_key, task_id, status, observacoes, updated_at)
+                    SELECT month_key, ?, 'Pendente', CASE WHEN month_key = ? THEN ? ELSE '' END, ?
                     FROM months
                     WHERE month_key >= ?
                     ORDER BY month_key
                     ON CONFLICT (month_key, task_id) DO NOTHING
                     """
                 ),
-                (next_id, now_iso(), current_month_key()),
+                (next_id, current_month_key(), observacoes_clean, now_iso(), current_month_key()),
             )
         else:
             conn.execute(
                 _sql(
                     """
-                    INSERT OR IGNORE INTO monthly_tasks (month_key, task_id, status, updated_at)
-                    SELECT month_key, ?, 'Pendente', ?
+                    INSERT OR IGNORE INTO monthly_tasks (month_key, task_id, status, observacoes, updated_at)
+                    SELECT month_key, ?, 'Pendente', CASE WHEN month_key = ? THEN ? ELSE '' END, ?
                     FROM months
                     WHERE month_key >= ?
                     ORDER BY month_key
                     """
                 ),
-                (next_id, now_iso(), current_month_key()),
+                (next_id, current_month_key(), observacoes_clean, now_iso(), current_month_key()),
             )
 
     return {
@@ -315,6 +326,24 @@ def create_base_task(atividade: str, setor: str, observacoes: str = "") -> dict:
         "setor": setor_clean,
         "observacoes": observacoes_clean,
     }
+
+
+def update_task_notes(month_key: str, task_id: int, observacoes: str) -> None:
+    observacoes_clean = observacoes.strip()
+    ensure_month(month_key)
+    with get_conn() as conn:
+        result = conn.execute(
+            _sql(
+                """
+                UPDATE monthly_tasks
+                SET observacoes = ?
+                WHERE month_key = ? AND task_id = ?
+                """
+            ),
+            (observacoes_clean, month_key, task_id),
+        )
+        if result.rowcount == 0:
+            raise LookupError("Tarefa não encontrada")
 
 
 def delete_base_task(task_id: int) -> None:
@@ -430,6 +459,26 @@ class Handler(BaseHTTPRequestHandler):
                 return
             except ValueError as exc:
                 self._send_json(HTTPStatus.BAD_REQUEST, {"error": str(exc)})
+                return
+            except LookupError as exc:
+                self._send_json(HTTPStatus.NOT_FOUND, {"error": str(exc)})
+                return
+
+            self._send_json(HTTPStatus.OK, {"ok": True})
+            return
+
+        if path == "/api/tasks/notes":
+            try:
+                body = self._read_json_body()
+                month = str(body.get("month", reference_month_key()))
+                task_id = int(body["taskId"])
+                observacoes = str(body.get("observacoes", ""))
+                update_task_notes(month, task_id, observacoes)
+            except KeyError:
+                self._send_json(HTTPStatus.BAD_REQUEST, {"error": "Campo taskId é obrigatório"})
+                return
+            except ValueError:
+                self._send_json(HTTPStatus.BAD_REQUEST, {"error": "ID de tarefa inválido"})
                 return
             except LookupError as exc:
                 self._send_json(HTTPStatus.NOT_FOUND, {"error": str(exc)})

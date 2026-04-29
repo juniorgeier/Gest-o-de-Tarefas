@@ -103,14 +103,39 @@ function renderTasks(tasks) {
     const meta = node.querySelector(".task-meta");
     const statusSelect = node.querySelector(".status-select");
     const removeButton = node.querySelector(".remove-task-button");
+    const notesInput = node.querySelector(".notes-input");
+    const saveNotesButton = node.querySelector(".save-notes-button");
 
     title.textContent = `${task.id}. ${task.atividade}`;
     const notes = task.observacoes?.trim();
     meta.textContent = notes
       ? `Setor: ${task.setor || "Não informado"} | Observações: ${notes}`
       : `Setor: ${task.setor || "Não informado"}`;
+    notesInput.value = task.observacoes || "";
     statusSelect.value = task.status;
     statusSelect.dataset.status = task.status;
+
+    const saveNotes = async () => {
+      const observacoes = notesInput.value.trim();
+      try {
+        await apiPatch("/api/tasks/notes", {
+          month: activeMonth,
+          taskId: task.id,
+          observacoes
+        });
+        await loadAndRenderTasks(activeMonth);
+      } catch (error) {
+        alert(error.message);
+      }
+    };
+
+    saveNotesButton.addEventListener("click", saveNotes);
+    notesInput.addEventListener("keydown", async (event) => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        await saveNotes();
+      }
+    });
 
     statusSelect.addEventListener("change", async (event) => {
       const value = event.target.value;

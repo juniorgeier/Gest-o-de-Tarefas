@@ -156,6 +156,26 @@ button {
   font-size: 0.86rem;
 }
 
+.task-notes-edit {
+  display: grid;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.task-notes-actions {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+}
+
+.task-notes-actions .notes-input {
+  min-width: 180px;
+}
+
+.task-notes-actions .save-notes-button {
+  white-space: nowrap;
+}
+
 .task-status {
   display: grid;
   gap: 4px;
