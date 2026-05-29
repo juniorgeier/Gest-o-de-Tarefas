@@ -3,6 +3,8 @@
 import json
 import os
 import sqlite3
+import sys
+import traceback
 from datetime import datetime
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -76,7 +78,8 @@ def get_conn():
     if IS_POSTGRES:
         if psycopg is None or dict_row is None:
             raise RuntimeError("Dependência psycopg não encontrada para usar DATABASE_URL Postgres")
-        return psycopg.connect(DATABASE_URL, row_factory=dict_row)
+        # Evita travar indefinidamente no boot quando o banco demora/indisponível.
+        return psycopg.connect(DATABASE_URL, row_factory=dict_row, connect_timeout=10)
 
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
@@ -201,7 +204,7 @@ def ensure_month(month_key: str) -> None:
         conn.execute(
             _sql(
                 """
-                INSERT INTO monthly_tasks (month_key, task_id, status, updated_at)
+                INSERT INTO monthly_tasks (month_key, task_id, status, observacoes, updated_at)
                 SELECT ?, id, 'Pendente', '', ?
                 FROM base_tasks
                 ORDER BY id
@@ -515,7 +518,14 @@ class Handler(BaseHTTPRequestHandler):
 
 
 def run() -> None:
-    init_db()
+    try:
+        print("Iniciando banco de dados...", flush=True)
+        init_db()
+        print("Banco de dados pronto.", flush=True)
+    except Exception as exc:
+        print(f"Falha ao inicializar banco: {exc}", file=sys.stderr, flush=True)
+        traceback.print_exc()
+        raise
     port = int(os.getenv("PORT", "8000"))
     server = ThreadingHTTPServer(("0.0.0.0", port), Handler)
     print(f"Servidor ativo em http://0.0.0.0:{port}")
