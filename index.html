@@ -24,9 +24,15 @@
     <section class="panel summary">
       <h2>Resumo do mês</h2>
       <div class="summary-grid">
-        <article><span>Pendentes</span><strong id="pendingCount">0</strong></article>
-        <article><span>Em andamento</span><strong id="inProgressCount">0</strong></article>
-        <article><span>Concluídas</span><strong id="doneCount">0</strong></article>
+        <button class="summary-card" type="button" data-status-filter="Pendente" aria-pressed="false">
+          <span>Pendentes</span><strong id="pendingCount">0</strong>
+        </button>
+        <button class="summary-card" type="button" data-status-filter="Em andamento" aria-pressed="false">
+          <span>Em andamento</span><strong id="inProgressCount">0</strong>
+        </button>
+        <button class="summary-card" type="button" data-status-filter="Concluído" aria-pressed="false">
+          <span>Concluídas</span><strong id="doneCount">0</strong>
+        </button>
       </div>
     </section>
 

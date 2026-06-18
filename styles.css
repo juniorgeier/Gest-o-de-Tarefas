@@ -107,18 +107,35 @@ button {
   gap: 10px;
 }
 
-.summary-grid article {
+.summary-card {
   border: 1px solid var(--border);
   border-radius: 10px;
   padding: 10px;
+  color: var(--text);
+  background: #fff;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
 }
 
-.summary-grid span {
+.summary-card:hover {
+  border-color: var(--accent);
+  box-shadow: 0 4px 14px rgba(15, 118, 110, 0.12);
+  transform: translateY(-1px);
+}
+
+.summary-card.active {
+  border-color: var(--accent);
+  background: #f0fdfa;
+  box-shadow: 0 0 0 2px rgba(15, 118, 110, 0.16);
+}
+
+.summary-card span {
   color: var(--muted);
   font-size: 0.88rem;
 }
 
-.summary-grid strong {
+.summary-card strong {
   display: block;
   margin-top: 4px;
   font-size: 1.2rem;
@@ -130,6 +147,14 @@ button {
   padding: 0;
   display: grid;
   gap: 8px;
+}
+
+.empty-tasks {
+  border: 1px dashed var(--border);
+  border-radius: 10px;
+  color: var(--muted);
+  padding: 14px;
+  text-align: center;
 }
 
 .task-row {

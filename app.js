@@ -11,9 +11,12 @@ const taskTemplate = document.getElementById("taskTemplate");
 const pendingCount = document.getElementById("pendingCount");
 const inProgressCount = document.getElementById("inProgressCount");
 const doneCount = document.getElementById("doneCount");
+const summaryCards = document.querySelectorAll("[data-status-filter]");
 
 let months = [];
 let activeMonth = "";
+let activeStatusFilter = "";
+let currentTasks = [];
 
 const monthLabel = new Intl.DateTimeFormat("pt-BR", {
   month: "long",
@@ -94,8 +97,31 @@ function renderSummary(tasks) {
   doneCount.textContent = String(summary.done);
 }
 
+function renderSummaryFilter() {
+  for (const card of summaryCards) {
+    const isActive = card.dataset.statusFilter === activeStatusFilter;
+    card.classList.toggle("active", isActive);
+    card.setAttribute("aria-pressed", String(isActive));
+  }
+}
+
+function getVisibleTasks(tasks) {
+  if (!activeStatusFilter) return tasks;
+  return tasks.filter((task) => task.status === activeStatusFilter);
+}
+
 function renderTasks(tasks) {
   tasksContainer.innerHTML = "";
+
+  if (tasks.length === 0) {
+    const emptyMessage = document.createElement("li");
+    emptyMessage.className = "empty-tasks";
+    emptyMessage.textContent = activeStatusFilter
+      ? `Nenhuma tarefa com status "${activeStatusFilter}" neste mês.`
+      : "Nenhuma tarefa cadastrada neste mês.";
+    tasksContainer.appendChild(emptyMessage);
+    return;
+  }
 
   for (const task of tasks) {
     const node = taskTemplate.content.cloneNode(true);
@@ -171,8 +197,12 @@ function renderTasks(tasks) {
 
     tasksContainer.appendChild(node);
   }
+}
 
+function renderPage(tasks) {
   renderSummary(tasks);
+  renderSummaryFilter();
+  renderTasks(getVisibleTasks(tasks));
 }
 
 async function loadMonths() {
@@ -194,7 +224,8 @@ async function loadMonths() {
 async function loadAndRenderTasks(month) {
   const data = await apiGet(`/api/tasks?month=${encodeURIComponent(month)}`);
   activeMonth = data.month;
-  renderTasks(data.tasks || []);
+  currentTasks = data.tasks || [];
+  renderPage(currentTasks);
 }
 
 async function init() {
@@ -215,6 +246,14 @@ async function init() {
     monthSelect.value = activeMonth;
     await loadAndRenderTasks(activeMonth);
   });
+
+  for (const card of summaryCards) {
+    card.addEventListener("click", () => {
+      const selectedStatus = card.dataset.statusFilter;
+      activeStatusFilter = activeStatusFilter === selectedStatus ? "" : selectedStatus;
+      renderPage(currentTasks);
+    });
+  }
 
   addTaskForm.addEventListener("submit", async (event) => {
     event.preventDefault();
